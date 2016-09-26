@@ -1,5 +1,3 @@
-
-
 var fs = require('fs');
 var readline = require('readline');
 var google = require('googleapis');
@@ -106,23 +104,47 @@ function listFiles(auth) {
   var drive = google.drive('v2');
   drive.files.list({
     auth: auth,
-    maxResults: 50,
-    q: "'0B9lAPdcaIKAreVFoYXdaR29ndVE' in parents"
+    q: "'0B9lAPdcaIKAreVFoYXdaR29ndVE' in parents and mimeType='application/vnd.google-apps.folder'"
   }, function(err, response) {
     if (err) {
       console.log('The API returned an error: ' + err);
       return;
     }
-    var files = response.items;
-    if (files.length == 0) {
+    var folders = response.items;
+
+    if (folders.length == 0) {
       console.log('No files found.');
-    } else {
-      console.log('Files:');
-      for (var i = 0; i < files.length; i++) {
-        var file = files[i];
-        console.log('%s (%s)', file.title, file.id);
-        console.log("public linK: "+"http://drive.google.com/uc?export=view&id="+file.id);
-      }
     }
+
+    else {
+	    var randFolderIndex = Math.floor(Math.random()*folders.length);
+	    console.log("num folders: "+folders.length);
+	    console.log("rand folder: "+randFolderIndex);
+	    //console.log(folders[randFolderIndex].id);
+	    var randFolderId = folders[randFolderIndex].id;
+	    var query = "'"+randFolderId+"' in parents and mimeType='image/jpeg'";
+	    console.log(query);
+	    //console.log(randFolder);
+	    drive.files.list({
+	    	auth: auth,
+	    	q: query
+	    }, function(err, response) {
+	    	if (err) {
+	    		console.log(err);
+	    		return;
+	    	}
+
+	    	var files = response.items;
+
+	    	if (files.length == 0) {
+	    		console.log('No files found.');
+	    		return;
+	    	}
+	    	var randFileIndex = Math.floor(Math.random()*files.length);
+	    	var randFile = files[randFileIndex];
+	    	console.log("public link: http://drive.google.com/uc?export=view&id="+randFile.id);
+	    });
+    }
+
   });
 }
