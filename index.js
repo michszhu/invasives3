@@ -2,7 +2,18 @@ var fs = require('fs');
 var readline = require('readline');
 var google = require('googleapis');
 var googleAuth = require('google-auth-library');
+var credentials;
+var test=5;
+var oauth2Client;
 
+var credentials = require('./client_secret.json');
+//console.log(credentials);
+var clientSecret = credentials.installed.client_secret;
+var clientId = credentials.installed.client_id;
+var redirectUrl = credentials.installed.redirect_uris[0];
+var auth = new googleAuth();
+oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
+//console.log("oauth2Client: "+oauth2Client); //third
 
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/drive-nodejs-quickstart.json
@@ -11,41 +22,16 @@ var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
     process.env.USERPROFILE) + '/.credentials/';
 var TOKEN_PATH = TOKEN_DIR + 'drive-nodejs-quickstart.json';
 
-// Load client secrets from a local file.
-fs.readFile('client_secret.json', function processClientSecrets(err, content) {
-  if (err) {
-    console.log('Error loading client secret file: ' + err);
-    return;
-  }
-  // Authorize a client with the loaded credentials, then call the
-  // Drive API.
 
-  authorize(JSON.parse(content), listFiles);
-});
-
-/**
- * Create an OAuth2 client with the given credentials, and then execute the
- * given callback function.
- *
- * @param {Object} credentials The authorization client credentials.
- * @param {function} callback The callback to call with the authorized client.
- */
-function authorize(credentials, callback) {
-  var clientSecret = credentials.installed.client_secret;
-  var clientId = credentials.installed.client_id;
-  var redirectUrl = credentials.installed.redirect_uris[0];
-  var auth = new googleAuth();
-  var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
-
-  // Check if we have previously stored a token.
-  fs.readFile(TOKEN_PATH, function(err, token) {
-    if (err) {
-      getNewToken(oauth2Client, callback);
-    } else {
-      oauth2Client.credentials = JSON.parse(token);
-      callback(oauth2Client);
-    }
-  });
+var token = fs.readFileSync(TOKEN_PATH);
+if (token) {
+	//console.log(oauth2Client);
+	oauth2Client.credentials = JSON.parse(token);
+	console.log('added token: '+token);
+}
+else {
+	getNewToken(oauth2Client);
+  console.log('got new token'); //second
 }
 
 /**
@@ -56,7 +42,7 @@ function authorize(credentials, callback) {
  * @param {getEventsCallback} callback The callback to call with the authorized
  *     client.
  */
-function getNewToken(oauth2Client, callback) {
+function getNewToken(oauth2Client) {
   var authUrl = oauth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES
@@ -75,7 +61,6 @@ function getNewToken(oauth2Client, callback) {
       }
       oauth2Client.credentials = token;
       storeToken(token);
-      callback(oauth2Client);
     });
   });
 }
@@ -102,10 +87,9 @@ function storeToken(token) {
  *
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-function listFiles(auth) {
-  var drive = google.drive('v2');
+function listFiles(res) {
+  var drive = google.drive({ version: 'v2', auth: oauth2Client });
   drive.files.list({
-    auth: auth,
     q: "'0B9lAPdcaIKAreVFoYXdaR29ndVE' in parents and mimeType='application/vnd.google-apps.folder'"
   }, function(err, response) {
     if (err) {
@@ -124,11 +108,11 @@ function listFiles(auth) {
 	    console.log("rand folder: "+randFolderIndex);
 	    //console.log(folders[randFolderIndex].id);
 	    var randFolderId = folders[randFolderIndex].id;
+	    var randFolderTitle = folders[randFolderIndex].title;
 	    var query = "'"+randFolderId+"' in parents and mimeType='image/jpeg'";
 	    console.log(query);
 	    //console.log(randFolder);
 	    drive.files.list({
-	    	auth: auth,
 	    	q: query
 	    }, function(err, response) {
 	    	if (err) {
@@ -144,9 +128,40 @@ function listFiles(auth) {
 	    	}
 	    	var randFileIndex = Math.floor(Math.random()*files.length);
 	    	var randFile = files[randFileIndex];
-	    	console.log("public link: http://drive.google.com/uc?export=view&id="+randFile.id);
+	    	var publicLink = "http://drive.google.com/uc?export=view&id="+randFile.id;
+	    	var response = {
+	    		publicLink: publicLink,
+	    		title: randFolderTitle
+	    	};
+	    	console.log("response: "+JSON.stringify(response));
+	    	res.send(JSON.stringify(response));
 	    });
     }
 
   });
+
 }
+
+var express = require('express');
+var app = express();
+app.set('port', (process.env.PORT || 3000));
+// view engine setup
+app.set('views', 'views');
+app.set('view engine', 'jade');
+
+app.use('/static', express.static(__dirname + '/public'));
+/// catch 404 and forward to error handler
+
+app.get('/', function (req, res) {
+    res.render('index');
+});
+
+app.get('/api/newImg', function (req, res) {
+	console.log("hit getnewImg");
+	listFiles(res);
+	console.log("sent res");
+});
+
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
+});

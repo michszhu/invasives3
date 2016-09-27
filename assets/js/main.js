@@ -11,13 +11,23 @@ $(document).ready(function() {
 
 	var getNewImg = function() {
 		$("#answer").addClass("hidden");
-		var tempIndex = Math.floor(Math.random()*113);
-		currFolder = folderNames[tempIndex];
-		currIndex = Math.floor(Math.random()*10);
-		currCommonName = speciesNames[tempIndex];
+		// var tempIndex = Math.floor(Math.random()*113);
+		// currFolder = folderNames[tempIndex];
+		// currIndex = Math.floor(Math.random()*10);
+		// currCommonName = speciesNames[tempIndex];
+		$.get('/api/newImg', function (data) {
+			var newImg = JSON.parse(data);
+			console.log(newImg);
+			currFolder=newImg.title;
+			console.log(newImg.title);
+			console.log(newImg.publicLink);
+			$("#image-container > img").attr('src',newImg.publicLink);
+
+
+		});
 		$("#loading-wrapper").removeClass("hidden");
 		$("img").addClass("hidden");
-		$("#image-container > img").attr('src','/static/imgs/'+currFolder+'/'+currIndex+'.jpg');
+		//$("#image-container > img").attr('src','/static/imgs/'+currFolder+'/'+currIndex+'.jpg');
 		$("#image-container > img").on('load', function() {
 			$("#loading-wrapper").addClass("hidden");
 			$("img").removeClass("hidden");			
