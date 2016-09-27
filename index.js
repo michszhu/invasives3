@@ -145,7 +145,7 @@ function listFiles(res) {
 	    	}
 	    	var randFileIndex = Math.floor(Math.random()*files.length);
 	    	var randFile = files[randFileIndex];
-	    	var publicLink = "http://drive.google.com/uc?export=view&id="+randFile.id;
+	    	var publicLink = "https://drive.google.com/uc?export=view&id="+randFile.id;
 	    	var response = {
 	    		publicLink: publicLink,
 	    		title: randFolderTitle

@@ -40,6 +40,14 @@ a, a:visited, a:link {
   text-align: center;
 }
 
+a.link {
+  font-size: inherit;
+  padding: 0;
+  margin: 0;
+  color: orange;
+  display: inline-block;
+}
+
 /*------------------------------*/
 
 /* Container Styles */
