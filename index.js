@@ -8,9 +8,9 @@ var oauth2Client;
 
 var credentials = require('./client_secret.json');
 //console.log(credentials);
-var clientSecret = credentials.installed.client_secret;
-var clientId = credentials.installed.client_id;
-var redirectUrl = credentials.installed.redirect_uris[0];
+var clientSecret = process.env.CLIENT_SECRET || credentials.installed.client_secret;
+var clientId = process.env.CLIENT_ID || credentials.installed.client_id;
+var redirectUrl = process.env.REDIRECT_URI || credentials.installed.redirect_uris[0];
 var auth = new googleAuth();
 oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
 //console.log("oauth2Client: "+oauth2Client); //third
