@@ -37,7 +37,7 @@ var TOKEN_PATH = TOKEN_DIR + 'drive-nodejs-quickstart.json';
 console.log(cloudToken);
 if (cloudToken.access_token != undefined) {
 	oauth2Client.credentials = cloudToken;
-	console.log('added cloud token: '+token);
+	console.log('added cloud token: '+cloudToken);
 }
 
 else if (cloudToken.access_token == undefined) {
