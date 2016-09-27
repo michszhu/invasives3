@@ -34,10 +34,10 @@ var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
     process.env.USERPROFILE) + '/.credentials/';
 var TOKEN_PATH = TOKEN_DIR + 'drive-nodejs-quickstart.json';
 
-console.log(cloudToken.access_token);
+console.log(cloudToken);
 if (cloudToken.access_token != undefined) {
-	oauth2Client.credentials = JSON.parse(cloudToken);
-	console.log('added token: '+token);
+	oauth2Client.credentials = cloudToken;
+	console.log('added cloud token: '+token);
 }
 
 else if (cloudToken.access_token == undefined) {
