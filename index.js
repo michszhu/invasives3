@@ -17,6 +17,12 @@ catch (e) {
 var clientSecret = process.env.CLIENT_SECRET || credentials.installed.client_secret;
 var clientId = process.env.CLIENT_ID || credentials.installed.client_id;
 var redirectUrl = process.env.REDIRECT_URI || credentials.installed.redirect_uris[0];
+var cloudToken = {
+	access_token: process.env.ACCESS_TOKEN,
+	token_type: "Bearer",
+	refresh_token: process.env.REFRESH_TOKEN,
+	expiry_date: process.env.EXPIRY_DATE
+};
 var auth = new googleAuth();
 oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
 //console.log("oauth2Client: "+oauth2Client); //third
@@ -28,10 +34,15 @@ var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
     process.env.USERPROFILE) + '/.credentials/';
 var TOKEN_PATH = TOKEN_DIR + 'drive-nodejs-quickstart.json';
 
+console.log(cloudToken.access_token);
+if (cloudToken.access_token != undefined) {
+	oauth2Client.credentials = JSON.parse(cloudToken);
+	console.log('added token: '+token);
+}
 
-var token = fs.readFileSync(TOKEN_PATH);
-if (token) {
+else if (cloudToken.access_token == undefined) {
 	//console.log(oauth2Client);
+	var token = fs.readFileSync(TOKEN_PATH);
 	oauth2Client.credentials = JSON.parse(token);
 	console.log('added token: '+token);
 }
