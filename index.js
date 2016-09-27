@@ -6,7 +6,13 @@ var credentials;
 var test=5;
 var oauth2Client;
 
-var credentials = require('./client_secret.json');
+var credentials;
+try {
+	credentials = require('./client_secret.json');
+}
+catch (e) {
+	console.log('file not found');
+}
 //console.log(credentials);
 var clientSecret = process.env.CLIENT_SECRET || credentials.installed.client_secret;
 var clientId = process.env.CLIENT_ID || credentials.installed.client_id;
