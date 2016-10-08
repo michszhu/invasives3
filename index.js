@@ -126,7 +126,7 @@ function listFiles(res) {
 	    //console.log(folders[randFolderIndex].id);
 	    var randFolderId = folders[randFolderIndex].id;
 	    var randFolderTitle = folders[randFolderIndex].title;
-	    var query = "'"+randFolderId+"' in parents and mimeType='image/jpeg' or mimeType='image/png' or mimeType='image/gif'";
+	    var query = "'"+randFolderId+"' in parents and (mimeType='image/jpeg' or mimeType='image/png' or mimeType='image/gif')";
 	    console.log(query);
 	    //console.log(randFolder);
 	    drive.files.list({
