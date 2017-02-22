@@ -20,8 +20,8 @@ $(document).ready(function() {
 			var newImg = JSON.parse(data);
 			console.log(newImg);
 			currFolder=newImg.title;
-			currCommonName = currFolder.split(/(\s+)/)[0];
-			currSciName = currFolder.split(/(\s+)/)[2];
+			currCommonName = currFolder.split(",")[0];
+			currSciName = currFolder.split(",")[1];
 			console.log(newImg.title);
 			console.log(newImg.publicLink);
 			$("#image-container > img").attr('src',newImg.publicLink);
