@@ -8,6 +8,7 @@ $(document).ready(function() {
 	var speciesNames = ["Asian_Citrus_Psyllid","Asian_Long-Horned_Beetle","Asian_Tiger_Mosquito","Brown_Marmorated_Stink_Bug","Cactus_Moth","Chilli_Thrips","Citrus_Longhorned_Beetle","Common_Pine_Shoot_Beetle","Emerald_Ash_Borer","European_Gypsy_Moth","European_Spruce_Bark_Beetle","Formosan_Subterranean_Termite","Giant_African_Snail","Glassy-Winged_Sharpshooter","Hemlock_Woolly_Adelgid","Light_Brown_Apple_Moth","Mediterranean_Fruit_Fly","Mexican_Fruit_Fly","Pink_Bollworm","Pink_Hibiscus_Mealybug","Red_Imported_Fire_Ant","Russian_Wheat_Aphid","Silverleaf_Whitefly","Soybean_Cyst_Nematode","Alewife","Asian_Carps","Asian_Clam","Asian_Shore_Crab","Asian_Swamp_Eel","Chinese_Mitten_Crab","Clubbed_Tunicate","Eurasian_Ruffe","European_Green_Crab","Lionfish","Northern_Snakehead","New_Zealand_Mud_Snail","Nutria","Quagga_Mussel","Round_Goby","Rusty_Crayfish","Sea_Lamprey","Sea_Squirt","Spiny_Water_Flea","Veined_Rapa_Whelk","White_Spotted_Jellyfish","Zebra_Mussel","Air_Potato","Autumn_Olive","Beach_Vitex","Brazilian_Peppertree","Canada_Thistle","Chinese_Tallow","Cogongrass","Common_Buckthorn","Common_Teasel","Dalmatian_Toadflax","Diffuse_Knapweed","Downy_Brome","Fig_Buttercup","Garlic_Mustard","Giant_Hogweed","Hairy_Whitetop","Houndstongue","Japanese_Climbing_Fern","Japanese_Honeysuckle","Japanese_Knotweed","Japanese_Spiraea","Japanese_Stilt_Grass","Johnsongrass","Kudzu","Leafy_Spurge","Medusahead","Mile-A-Minute_Weed","Multiflora_Rose","Musk_Thistle","Old_World_Climbing_Fern","Princess_Tree","Purple_Star_Thistle","Russian_Knapweed","Russian_Olive","Saltcedar","St._Johnswort","Scotch_Broom","Scotch_Thistle","Spotted_Knapweed","Tree-of-Heaven","Tropical_Soda_Apple","Whitetop","Witchweed","Yellow_Star_Thistle","Yellow_Toadflax","Alligatorweed","Brazilian_Waterweed","Caulerpa,_Mediterranean_Clone","Common_Reed","Curly_Pondweed","Rock_Snot","Eurasian_Watermilfoil","Giant_Reed","Giant_Salvinia","Hydrilla","Melaleuca","Purple_Loosestrife","Water_Hyacinth","Water_Lettuce","Water_Spinach","Dutch_Elm_Disease","Butternut_Canker","Oak_Wilt","Whitenose_Bat_Syndrome","Blue_Tongue_Virus","West_Nile_Virus","Bird_Flu"];
 	var currFolder = "";
 	var currCommonName = "";
+	var currSciName = ""; 
 
 	var getNewImg = function() {
 		$("#answer").addClass("hidden");
@@ -19,6 +20,8 @@ $(document).ready(function() {
 			var newImg = JSON.parse(data);
 			console.log(newImg);
 			currFolder=newImg.title;
+			currCommonName = currFolder.split(/(\s+)/)[0];
+			currSciName = currFolder.split(/(\s+)/)[2];
 			console.log(newImg.title);
 			console.log(newImg.publicLink);
 			$("#image-container > img").attr('src',newImg.publicLink);
@@ -39,7 +42,7 @@ $(document).ready(function() {
 		//console.log("matches sci name "+(acceptScientificNames&&input===currFolder.toLowerCase()));
 		console.log("accepting common names "+acceptCommonNames);
 		console.log("input vs ans "+input+" "+currCommonName.toLowerCase());
-		if((acceptScientificNames&&input===currFolder.toLowerCase())||(acceptCommonNames && input===currCommonName.toLowerCase())) {
+		if((acceptScientificNames&&input===currSciName.toLowerCase())||(acceptCommonNames && input===currCommonName.toLowerCase())) {
 			result.text("Correct!");
 			result.removeClass("alert-danger").addClass("alert-success");
 			result.removeClass("hidden");
@@ -59,7 +62,7 @@ $(document).ready(function() {
 		}
 	};
 	var updateAns = function() {
-		$("#answer").text(currCommonName.replace(/\_/g, ' ')+"  /  "+currFolder.replace(/\_/g, ' '));
+		$("#answer").text(currCommonName.replace(/\_/g, ' ')+"  /  "+currSciName.replace(/\_/g, ' '));
 	}
 
 	var incrementCount = function(correct) {
